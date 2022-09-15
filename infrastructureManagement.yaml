@@ -1,0 +1,5176 @@
+openapi: 3.0.0
+info:
+  description: Infrastructure Management v2 API specification
+  version: 1.0.0
+  title: Infrastructure Management API
+  contact:
+    email: admin@mrinq.com
+
+servers:
+  - url: "https://api.spintly.com/"
+    description: Production Server
+  - url: "https://test.api.spintly.com/"
+    description: Test Server
+  - url: "http://3.7.59.151:8080/"
+    description: Development Server
+  - url: "https://sandbox.api.spintly.com/"
+    description: Sandbox Server
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "error"
+        message:
+          type: object
+          properties:
+            errorCode:
+              type: number
+              example: 8008
+            errorMessage:
+              type: string
+              example: "A generic error message."
+    MeshIO:
+      type: object
+      properties:
+        # id:
+        #   type: number
+        #   example: 1
+        name:
+          type: string
+          example: "Mesh I/O 1"
+        serialNumber:
+          type: string
+          example: "1001F001000001"
+        siteId:
+          type: number
+          example: 1
+        resourceState:
+          type: string
+          example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+        function:
+          type: string
+          example: fire_panel
+        functionId:
+          type: number
+          example: 1
+        meshConfiguredState:
+          type: number
+          example: 1
+        meshIOState:
+          type: string
+          example: "unassigned/assigned/pending_unassigned"
+        meshIOStatus:
+          type: string
+          example: "online/offline"
+        meshConfigurationInfo:
+          $ref: "#/components/schemas/MeshConfigurationInfo"
+    MeshConfigurationInfo:
+      type: object
+      properties:
+        networkKey:
+          type: string
+          example: "81210a8ac8ba8cafb813ad8c61887884"
+        unicastMeshAddress:
+          type: number
+          example: 1
+        appKey:
+          type: string
+          example: "81210a8ac8ba8cafb813ad8c61887884"
+        gatewayGroupAddr:
+          type: number
+          example: 49153
+        accessControlGroupAddr:
+          type: number
+          example: 49152
+        healthServerGroupAddr:
+          type: number
+          example: 49154
+        macId:
+          type: string
+          example: eeeeee49a451
+    MeshIOPin:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        # serialNumber:
+        #   type: string
+        #   example: '1001F001000001'
+        name:
+          type: string
+          example: "D.I. 1"
+        type:
+          type: string
+          example: "DI/DO"
+        number:
+          type: number
+          example: 1
+        isEnabled:
+          type: boolean
+          example: true
+    FirePanel:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        name:
+          type: string
+          example: "Fire Panel 1"
+        siteId:
+          type: number
+          example: 2
+        meshIOs:
+          type: array
+          items:
+            $ref: "#/components/schemas/MeshIO"
+    MeshIOs:
+      type: object
+      properties:
+        # id:
+        #   type: number
+        #   example: 1
+        name:
+          type: string
+          example: "Mesh I/O 1"
+        serialNumber:
+          type: string
+          example: "1001F001000001"
+        siteId:
+          type: number
+          example: 1
+        resourceState:
+          type: string
+          example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+        function:
+          type: string
+          example: fire_panel
+        functionId:
+          type: number
+          example: 1
+        meshConfiguredState:
+          type: number
+          example: 1
+        meshIOState:
+          type: string
+          example: "unassigned/assigned/pending_unassigned"
+        meshIOStatus:
+          type: string
+          example: "online/offline"
+   
+
+paths:
+  /infrastructureManagement/v2/health:
+    get:
+      tags:
+        - "Service Health"
+      summary: Get service health status
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Service is Healthy!!!"
+
+  /infrastructureManagement/v2/integrators:
+    get:
+      tags:
+        - "Integrators"
+      summary: Get all integrators
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      integrators:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "Spintly"
+
+    post:
+      tags:
+        - "Integrators"
+      summary: Create a integrator
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Remnet"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      integratorId:
+                        type: number
+                        example: 1
+
+  /infrastructureManagement/v2/integrators/:integratorId:
+    patch:
+      tags:
+        - "Integrators"
+      summary: Update integrator details
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Remnet"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Integrator details got updated successfully!!!"
+
+    delete:
+      tags:
+        - "Integrators"
+      summary: Delete a integrator
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Integrator got deleted successfully!!!"
+
+  /infrastructureManagement/v2/integrators/:integratorId/resourceWebhook:
+    get:
+      tags:
+        - "Integrators"
+      summary: Get integrator webhook details
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      webhookUrl:
+                        type: string
+                        example: "https://integrator/notifications"
+                      webhookMethod:
+                        type: string
+                        example: "POST/PATCH"
+                      webhookAuthenticationHeaderDetails:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                            example: "Authorization/x-api-key"
+
+    post:
+      tags:
+        - "Integrators"
+      summary: Create a integrator webhook
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                webhookUrl:
+                  type: "string"
+                  example: "https://integrator/notifications"
+                webhookMethod:
+                  type: "string"
+                  example: "POST/PATCH"
+                webhookAuthenticationHeaderDetails:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      example: "Authorization/x-api-key"
+                    value:
+                      type: string
+                      example: "0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Webhook got created successfully"
+
+    delete:
+      tags:
+        - "Integrators"
+      summary: Delete a integrator webhook
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Webhook got deleted successfully"
+
+  /infrastructureManagement/v2/integrators/:integratorId/webhooks/verifyApiKey:
+    post:
+      tags:
+        - "Integrators"
+      summary: Verify integrator webhook API Key
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                apiKey:
+                  type: "string"
+                  example: "0imfnc8mVLWwsAawjYr4Rx-Af50DDqtlx"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Valid webhook API key"
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations:
+    get:
+      tags:
+        - "Organisation"
+      summary: Get list of organisations under partner
+      operationId: logSingleHistory
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      organisations:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "MRINQ"
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+
+    post:
+      tags:
+        - "Organisation"
+      summary: Create a organisation under a partner
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                integratorId:
+                  type: number
+                  example: 1
+                name:
+                  type: "string"
+                  example: "Mrinq"
+                type:
+                  type: "string"
+                  example: "office"
+                country:
+                  type: "string"
+                  example: "IN"
+                admin:
+                  type: object
+                  properties:
+                    name:
+                      type: "string"
+                      example: "Joaan"
+                    phoneNumber:
+                      type: "string"
+                      example: "+911020202023"
+                    email:
+                      type: "string"
+                      example: "admin@mrinq.com"
+                integration:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                      example: true
+                    integrationToAdd:
+                      type: array
+                      items:
+                        type: number
+                        example: 1
+                modules:
+                  type: object
+                  properties:
+                    modulesToAdd:
+                      type: array
+                      items:
+                        type: number
+                        example: 1
+
+                site:
+                  type: array
+                  items:
+                    properties:
+                      name:
+                        type: "string"
+                        example: "Office-1"
+                      location:
+                        type: "string"
+                        example: "Margao"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      organisationId:
+                        type: number
+                        example: 1
+                      siteId:
+                        type: number
+                        example: 1
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/formData:
+    get:
+      tags:
+        - "Organisation"
+      summary: Get form data used for organisations configuration.
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      integrations:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "greytHR"
+                      modules:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "access_management"
+                            default:
+                              type: string
+                              example: "enable/disable"
+                            editable:
+                              type: boolean
+                              example: true
+                      cardTypes:
+                        type: string
+                        example: ["secure", "unsecure"]
+  
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId:
+    get:
+      tags:
+        - "Organisation"
+      summary: Get organisation details
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      generalSetting:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "MRINQ"
+                          type:
+                            type: string
+                            example: "office"
+                          country:
+                            type: "string"
+                            example: "IN"
+                          admin:
+                            type: object
+                            properties:
+                              editable:
+                                type: boolean
+                                example: false
+                              name:
+                                type: "string"
+                                example: "Joaan"
+                              phoneNumber:
+                                type: "string"
+                                example: "+911020202023"
+                              email:
+                                type: "string"
+                                example: "admin@mrinq.com"
+                          cardType:
+                            type: "string"
+                            example: "secure_mifare_classic/unsecure_ntag"
+                          integration:
+                            type: object
+                            properties:
+                              enabled:
+                                type: boolean
+                                example: true
+                              types:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: number
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "greytHR"
+                          modules:
+                            type: array
+                            items:
+                              properties:
+                                id:
+                                  type: number
+                                  example: 1
+                                name:
+                                  type: string
+                                  example: "access_management"
+                          resourceState:
+                            type: "string"
+                            example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+
+    patch:
+      tags:
+        - "Organisation"
+      summary: Edit organisation general settings
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                generalSetting:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "MRINQ"
+                    type:
+                      type: string
+                      example: "office"
+                    country:
+                      type: "string"
+                      example: "IN"
+                    admin:
+                      type: object
+                      properties:
+                        name:
+                          type: "string"
+                          example: "Joaan"
+                        phoneNumber:
+                          type: "string"
+                          example: "+911020202023"
+                        email:
+                          type: "string"
+                          example: "admin@mrinq.com"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+    delete:
+      tags:
+        - "Organisation"
+      summary: Delete organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Organisation deleted successfully"
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/settings/card:
+    patch:
+      tags:
+        - "Organisation"
+      summary: Edit organisation settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardType:
+                  type: string
+                  example: "secure/unsecure"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/integrationSettings:
+    patch:
+      tags:
+        - "Organisation"
+      summary: Edit organisation settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                  example: true
+                integrationToAdd:
+                  type: array
+                  items:
+                    type: number
+                    example: 1
+                integrationToRemove:
+                  type: array
+                  items:
+                    type: number
+                    example: 1
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/moduleSettings:
+    patch:
+      tags:
+        - "Organisation"
+      summary: Edit organisation settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                modulesToAdd:
+                  type: array
+                  items:
+                    type: integer
+                    example: 1
+                modulesToRemove:
+                  type: array
+                  items:
+                    type: integer
+                    example: 2
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/integrators/organisations/:organisationId:
+    patch:
+      tags:
+        - "Organisation"
+      summary: Edit organisation general settings from integrator service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                generalSetting:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "MRINQ"
+                    type:
+                      type: string
+                      example: "office"
+                    country:
+                      type: "string"
+                      example: "IN"
+                    admin:
+                      type: object
+                      properties:
+                        name:
+                          type: "string"
+                          example: "Joaan"
+                        phoneNumber:
+                          type: "string"
+                          example: "+911020202023"
+                        email:
+                          type: "string"
+                          example: "admin@mrinq.com"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/integrators/organisations/:organisationId/adminEditable/:boolean:
+    post:
+      tags:
+        - "Organisation"
+      summary: Lock/Unlock organisation admin details from integrator service
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/sites:
+    get:
+      tags:
+        - "Sites"
+      summary: Get Site under organisations
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      sites:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: "string"
+                              example: "Office-2"
+                            location:
+                              type: "string"
+                              example: "Porvorim"
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+
+    post:
+      tags:
+        - "Sites"
+      summary: Create a site under a organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Office-2"
+                location:
+                  type: "string"
+                  example: "Porvorim"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      siteId:
+                        type: number
+                        example: 1
+  /infrastructureManagement/v2/sites/:siteId:
+    patch:
+      tags:
+        - "Sites"
+      summary: Update a site name under a organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Office-2"
+               
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: site name updated successfully
+      
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/sites/:siteId:
+    patch:
+      tags:
+        - "Sites"
+      summary: Update site details
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Office-2"
+                location:
+                  type: "string"
+                  example: "Porvorim"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+    delete:
+      tags:
+        - "Sites"
+      summary: Delete site under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Site deleted successfully"
+
+  /infrastructureManagement/v2/integrators/organisations/:organisationId/sites/:siteId:
+    patch:
+      tags:
+        - "Sites"
+      summary: Update site details from integrator service
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Office-2"
+                location:
+                  type: "string"
+                  example: "Porvorim"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/gateways:
+    get:
+      tags:
+        - "Gateways"
+      summary: Get gateways under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      gateways:
+                        type: array
+                        items:
+                          properties:
+                            siteId:
+                              type: number
+                              example: 1
+                            siteName:
+                              type: "string"
+                              example: "SANQUELIM"
+                            serialNumber:
+                              type: "string"
+                              example: "100BA00A000005"
+                            model:
+                              type: "string"
+                              example: "Fi-B Gateway"
+                            meshConfiguredState:
+                              type: number
+                              example: 1
+                            cloudStatus:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                            meshConfigurationInfo:
+                              type: object
+                              properties:
+                                networkKey:
+                                  type: string
+                                  example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                unicastMeshAddress:
+                                  type: number
+                                  example: 0x0002
+                                appKey:
+                                  type: string
+                                  example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                gatewayGroupAddr:
+                                  type: number
+                                  example: 0xC001
+                                accessControlGroupAddr:
+                                  type: number
+                                  example: 0xC000
+                                healthServerGroupAddr:
+                                  type: number
+                                  example: 0xC002
+                                macId:
+                                  type: string
+                                  example: "FD5F3A592120"
+
+    post:
+      tags:
+        - "Gateways"
+      summary: Add gateway to site under organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                siteId:
+                  type: number
+                  example: 1
+                serialNumber:
+                  type: "string"
+                  example: "100BA00A000005"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/gateways/:serialNumber:
+    delete:
+      tags:
+        - "Gateways"
+      summary: Delete gateways under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Gateway deleted successfully!!!"
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/gateways/:serialNumber/configureDone:
+    post:
+      tags:
+        - "Gateways"
+      summary: Notify gateway is configured
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceConfiguredInfo:
+                  type: object
+                  properties:
+                    deviceKey:
+                      type: string
+                      example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                    cid:
+                      type: string
+                      example: "0059"
+                    pid:
+                      type: string
+                      example: "1001"
+                    vid:
+                      type: string
+                      example: "3020"
+                    cprl:
+                      type: string
+                      example: "0028"
+                    defaultTTL:
+                      type: number
+                      example: 8
+                    features:
+                      type: object
+                      properties:
+                        friend:
+                          type: number
+                          example: 2
+                        lowPower:
+                          type: number
+                          example: 2
+                        proxy:
+                          type: number
+                          example: 1
+                        relay:
+                          type: number
+                          example: 1
+                    elements:
+                      type: array
+                      items:
+                        properties:
+                          name:
+                            type: string
+                            example: "Element: 0x0007"
+                          index:
+                            type: number
+                            example: 1
+                          location:
+                            type: string
+                            example: "0000"
+                          elements:
+                            type: array
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                  example: "Element: 0x0007"
+                                index:
+                                  type: number
+                                  example: 1
+                                location:
+                                  type: string
+                                  example: "0000"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/gateways/:serialNumber/resetDone:
+    post:
+      tags:
+        - "Gateways"
+      summary: Notify device reset done
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/gateways/:serialNumber/reset:
+    post:
+      tags:
+        - "Gateways"
+      summary: Reset gateway from iot network
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/accessPoints:
+    get:
+      tags:
+        - "Access Point"
+      summary: Get access points under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      accessPoints:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            siteId:
+                              type: number
+                              example: 1
+                            siteName:
+                              type: "string"
+                              example: "SANQUELIM"
+                            name:
+                              type: "string"
+                              example: "Main Entrance"
+                            forAccess:
+                              type: boolean
+                              example: true
+                            forAttendance:
+                              type: boolean
+                              example: true
+                            installationType:
+                              type: "string"
+                              example: "swingDoor/boomBarrier"
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+                            devices:
+                              type: array
+                              items:
+                                properties:
+                                  serialNumber:
+                                    type: string
+                                    example: "1001A001000003"
+                                  type:
+                                    type: string
+                                    example: "entry/exit"
+                                  meshConfiguredState:
+                                    type: number
+                                    example: 1
+                                  deviceStatus:
+                                    type: number
+                                    example: 1
+                                  resourceState:
+                                    type: "string"
+                                    example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                                  meshConfigurationInfo:
+                                    type: object
+                                    properties:
+                                      networkKey:
+                                        type: string
+                                        example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                      unicastMeshAddress:
+                                        type: number
+                                        example: 0x0002
+                                      appKey:
+                                        type: string
+                                        example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                      gatewayGroupAddr:
+                                        type: number
+                                        example: 0xC001
+                                      accessControlGroupAddr:
+                                        type: number
+                                        example: 0xC000
+                                      healthServerGroupAddr:
+                                        type: number
+                                        example: 0xC002
+                                      eKey:
+                                        type: string
+                                        example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                                      macId:
+                                        type: string
+                                        example: "FD5F3A592120"
+
+    post:
+      tags:
+        - "Access Point"
+      summary: Add access point to site under organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                siteId:
+                  type: number
+                  example: 1
+                name:
+                  type: "string"
+                  example: "Main Entrance"
+                forAccess:
+                  type: boolean
+                  example: true
+                forAttendance:
+                  type: boolean
+                  example: true
+                installationType:
+                  type: "string"
+                  example: "swingDoor/boomBarrier"
+                devices:
+                  type: array
+                  items:
+                    properties:
+                      serialNumber:
+                        type: string
+                        example: "1001A001000003"
+                      type:
+                        type: string
+                        example: "entry/exit"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      accessPointId:
+                        type: number
+                        example: 1
+
+
+  
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/accessPoints:
+    post:
+      tags:
+        - "Access Point"
+      summary: Add access point to site under organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                siteId:
+                  type: number
+                  example: 1
+                name:
+                  type: "string"
+                  example: "Main Entrance"
+                forAccess:
+                  type: boolean
+                  example: true
+                forAttendance:
+                  type: boolean
+                  example: true
+                installationType:
+                  type: "string"
+                  example: "swingDoor/boomBarrier"
+                doorSensor:
+                  type: object
+                  properties:
+                    direction:
+                      type: string
+                      example: "entry"
+                    enabled:
+                      type: string
+                      example: "true"
+                    type:
+                      type: string
+                      example: "NC"
+                devices:
+                  type: array
+                  items:
+                    properties:
+                      serialNumber:
+                        type: string
+                        example: "1001A001000003"
+                      type:
+                        type: string
+                        example: "entry/exit"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      accessPointId:
+                        type: number
+                        example: 1
+    get:
+      tags:
+        - "Access Point"
+      summary: Get access points under organisation. (Also includes cardReadBaseKey)
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      accessPoints:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            siteId:
+                              type: number
+                              example: 1
+                            name:
+                              type: "string"
+                              example: "Main Entrance"
+                            forAccess:
+                              type: boolean
+                              example: true
+                            forAttendance:
+                              type: boolean
+                              example: true
+                            installationType:
+                              type: "string"
+                              example: "swingDoor/boomBarrier"
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+                            devices:
+                              type: array
+                              items:
+                                properties:
+                                  serialNumber:
+                                    type: string
+                                    example: "1001A001000003"
+                                  type:
+                                    type: string
+                                    example: "entry/exit"
+                                  meshConfiguredState:
+                                    type: number
+                                    example: 1
+                                  deviceStatus:
+                                    type: number
+                                    example: 1
+                                  resourceState:
+                                    type: "string"
+                                    example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                                  meshConfigurationInfo:
+                                    type: object
+                                    properties:
+                                      networkKey:
+                                        type: string
+                                        example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                      unicastMeshAddress:
+                                        type: number
+                                        example: 0x0002
+                                      appKey:
+                                        type: string
+                                        example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                      gatewayGroupAddr:
+                                        type: number
+                                        example: 0xC001
+                                      accessControlGroupAddr:
+                                        type: number
+                                        example: 0xC000
+                                      healthServerGroupAddr:
+                                        type: number
+                                        example: 0xC002
+                                      eKey:
+                                        type: string
+                                        example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                                      macId:
+                                        type: string
+                                        example: "FD5F3A592120"
+                                      cardType:
+                                        type: string
+                                        example: "secure/unsecure"
+                                      cardReadBaseKey:
+                                        type: string
+                                        example: "81bfcbb5b7bf94675d673bc5e4eba4e3"
+                                        
+                                  
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/accessPoints/:accessPointId:
+    get:
+      tags:
+        - "Access Point"
+      summary: Get access points details
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      siteId:
+                        type: number
+                        example: 1
+                      name:
+                        type: "string"
+                        example: "Main Entrance"
+                      forAccess:
+                        type: boolean
+                        example: true
+                      forAttendance:
+                        type: boolean
+                        example: true
+                      installationType:
+                        type: "string"
+                        example: "swingDoor/boomBarrier"
+                      resourceState:
+                        type: "string"
+                        example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+                      devices:
+                        type: array
+                        items:
+                          properties:
+                            serialNumber:
+                              type: string
+                              example: "1001A001000003"
+                            type:
+                              type: string
+                              example: "entry/exit"
+                            meshConfiguredState:
+                              type: number
+                              example: 1
+                            deviceStatus:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                            meshConfigurationInfo:
+                              type: object
+                              properties:
+                                networkKey:
+                                  type: string
+                                  example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                unicastMeshAddress:
+                                  type: number
+                                  example: 0x0002
+                                appKey:
+                                  type: string
+                                  example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                gatewayGroupAddr:
+                                  type: number
+                                  example: 0xC001
+                                accessControlGroupAddr:
+                                  type: number
+                                  example: 0xC000
+                                healthServerGroupAddr:
+                                  type: number
+                                  example: 0xC002
+                                eKey:
+                                  type: string
+                                  example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                                macId:
+                                  type: string
+                                  example: "FD5F3A592120"
+
+    patch:
+      tags:
+        - "Access Point"
+      summary: Update access point details
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Main Entrance"
+                forAccess:
+                  type: boolean
+                  example: true
+                forAttendance:
+                  type: boolean
+                  example: true
+                installationType:
+                  type: "string"
+                  example: "swingDoor/boomBarrier"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+    delete:
+      tags:
+        - "Access Point"
+      summary: Delete access point under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Access point deleted successfully"
+
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/accessPoints/:accessPointId:
+    get:
+      tags:
+        - "Access Point"
+      summary: Get access points details. (Also includes cardReadBaseKey)
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      siteId:
+                        type: number
+                        example: 1
+                      siteName:
+                       type: "string"
+                       example: "SANQUELIM"
+                      name:
+                        type: "string"
+                        example: "Main Entrance"
+                      forAccess:
+                        type: boolean
+                        example: true
+                      forAttendance:
+                        type: boolean
+                        example: true
+                      installationType:
+                        type: "string"
+                        example: "swingDoor/boomBarrier"
+                      resourceState:
+                        type: "string"
+                        example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+                      devices:
+                        type: array
+                        items:
+                          properties:
+                            serialNumber:
+                              type: string
+                              example: "1001A001000003"
+                            type:
+                              type: string
+                              example: "entry/exit"
+                            meshConfiguredState:
+                              type: number
+                              example: 1
+                            deviceStatus:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                            meshConfigurationInfo:
+                              type: object
+                              properties:
+                                networkKey:
+                                  type: string
+                                  example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                unicastMeshAddress:
+                                  type: number
+                                  example: 0x0002
+                                appKey:
+                                  type: string
+                                  example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                gatewayGroupAddr:
+                                  type: number
+                                  example: 0xC001
+                                accessControlGroupAddr:
+                                  type: number
+                                  example: 0xC000
+                                healthServerGroupAddr:
+                                  type: number
+                                  example: 0xC002
+                                eKey:
+                                  type: string
+                                  example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                                macId:
+                                  type: string
+                                  example: "FD5F3A592120"
+                                cardType:
+                                  type: string
+                                  example: "secure/unsecure"
+                                cardReadBaseKey:
+                                  type: string
+                                  example: "81bfcbb5b7bf94675d673bc5e4eba4e3"
+    patch:
+        tags:
+          - "Access Point"
+        summary: Update access point details
+        requestBody:
+          required: true
+          description: access log details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: "string"
+                    example: "Main Entrance"
+                  forAccess:
+                    type: boolean
+                    example: true
+                  forAttendance:
+                    type: boolean
+                    example: true
+                  installationType:
+                    type: "string"
+                    example: "swingDoor/boomBarrier"
+                  doorSensor:
+                    type: object
+                    properties:
+                      direction:
+                        type: string
+                        example: "entry"
+                      enabled:
+                        type: string
+                        example: "true"
+                      type:
+                        type: string
+                        example: "NC"
+  
+        responses:
+          200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: success
+  /infrastructureManagement/v2/integrators/organisations/:organisationId/accessPoints/:accessPointId:
+    patch:
+      tags:
+        - "Access Point"
+      summary: Update access point details from integrator service
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Main Entrance"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/detachedDevices:
+    get:
+      tags:
+        - "Devices"
+      summary: Get list of detached device in organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      devices:
+                        type: array
+                        items:
+                          properties:
+                            serialNumber:
+                              type: string
+                              example: "1001A001000003"
+                            meshConfiguredState:
+                              type: number
+                              example: 1
+                            deviceStatus:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                            meshConfigurationInfo:
+                              type: object
+                              properties:
+                                networkKey:
+                                  type: string
+                                  example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                unicastMeshAddress:
+                                  type: number
+                                  example: 0x0002
+                                appKey:
+                                  type: string
+                                  example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                gatewayGroupAddr:
+                                  type: number
+                                  example: 0xC001
+                                accessControlGroupAddr:
+                                  type: number
+                                  example: 0xC000
+                                healthServerGroupAddr:
+                                  type: number
+                                  example: 0xC002
+                                eKey:
+                                  type: string
+                                  example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                                macId:
+                                  type: string
+                                  example: "FD5F3A592120"
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/accessPoints/:accessPointId/devices/:serialNumber:
+    delete:
+      tags:
+        - "Devices"
+      summary: Delete device attached to access point
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Device deleted successfully"
+
+    post:
+      tags:
+        - "Devices"
+      summary: Add device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceType:
+                  type: string
+                  example: "entry"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/devices/:serialNumber/configureDone:
+    post:
+      tags:
+        - "Devices"
+      summary: Notify device is configured
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceConfiguredInfo:
+                  type: object
+                  properties:
+                    deviceUUID:
+                      type: string
+                      example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                    deviceKey:
+                      type: string
+                      example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                    cid:
+                      type: string
+                      example: "0059"
+                    pid:
+                      type: string
+                      example: "1001"
+                    vid:
+                      type: string
+                      example: "3020"
+                    cprl:
+                      type: string
+                      example: "0028"
+                    defaultTTL:
+                      type: number
+                      example: 8
+                    features:
+                      type: object
+                      properties:
+                        friend:
+                          type: number
+                          example: 2
+                        lowPower:
+                          type: number
+                          example: 2
+                        proxy:
+                          type: number
+                          example: 1
+                        relay:
+                          type: number
+                          example: 1
+                    elements:
+                      type: array
+                      items:
+                        properties:
+                          name:
+                            type: string
+                            example: "Element: 0x0007"
+                          index:
+                            type: number
+                            example: 1
+                          location:
+                            type: string
+                            example: "0000"
+                          elements:
+                            type: array
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                  example: "Element: 0x0007"
+                                index:
+                                  type: number
+                                  example: 1
+                                location:
+                                  type: string
+                                  example: "0000"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                    
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/devices/:serialNumber/configure:
+    post:
+      tags:
+        - "Devices"
+      summary: Notify fr device is configured
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/accessPoints/:accessPointId/devices/:serialNumber/detach:
+    post:
+      tags:
+        - "Devices"
+      summary: Detach device from access point
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/devices/:serialNumber/resetDone:
+    post:
+      tags:
+        - "Devices"
+      summary: Notify device reset done
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                    
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/devices/:serialNumber/reset:
+    post:
+      tags:
+        - "Devices"
+      summary: reset
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/repeaters:
+    get:
+      tags:
+        - "Repeaters"
+      summary: Get repeaters under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      repeaters:
+                        type: array
+                        items:
+                          properties:
+                            siteId:
+                              type: number
+                              example: 1
+                            serialNumber:
+                              type: "string"
+                              example: "1018A00A000001"
+                            meshConfiguredState:
+                              type: number
+                              example: 1
+                            repeaterStatus:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                            meshConfigurationInfo:
+                              type: object
+                              properties:
+                                networkKey:
+                                  type: string
+                                  example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                unicastMeshAddress:
+                                  type: number
+                                  example: 0x0002
+                                appKey:
+                                  type: string
+                                  example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                gatewayGroupAddr:
+                                  type: number
+                                  example: 0xC001
+                                accessControlGroupAddr:
+                                  type: number
+                                  example: 0xC000
+                                healthServerGroupAddr:
+                                  type: number
+                                  example: 0xC002
+                                macId:
+                                  type: string
+                                  example: "FD5F3A592120"
+
+    post:
+      tags:
+        - "Repeaters"
+      summary: Add repeater to site under organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                siteId:
+                  type: number
+                  example: 1
+                serialNumber:
+                  type: "string"
+                  example: "1018A00A000001"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/repeaters/:serialNumber:
+    delete:
+      tags:
+        - "Repeaters"
+      summary: Delete repeater under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Repeater deleted successfully!!!"
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/repeaters/:serialNumber/configureDone:
+    post:
+      tags:
+        - "Repeaters"
+      summary: Notify repeater is configured
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceConfiguredInfo:
+                  type: object
+                  properties:
+                    deviceKey:
+                      type: string
+                      example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                    cid:
+                      type: string
+                      example: "0059"
+                    pid:
+                      type: string
+                      example: "1001"
+                    vid:
+                      type: string
+                      example: "3020"
+                    cprl:
+                      type: string
+                      example: "0028"
+                    defaultTTL:
+                      type: number
+                      example: 8
+                    features:
+                      type: object
+                      properties:
+                        friend:
+                          type: number
+                          example: 2
+                        lowPower:
+                          type: number
+                          example: 2
+                        proxy:
+                          type: number
+                          example: 1
+                        relay:
+                          type: number
+                          example: 1
+                    elements:
+                      type: array
+                      items:
+                        properties:
+                          name:
+                            type: string
+                            example: "Element: 0x0007"
+                          index:
+                            type: number
+                            example: 1
+                          location:
+                            type: string
+                            example: "0000"
+                          elements:
+                            type: array
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                  example: "Element: 0x0007"
+                                index:
+                                  type: number
+                                  example: 1
+                                location:
+                                  type: string
+                                  example: "0000"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/repeaters/:serialNumber/resetDone:
+    post:
+      tags:
+        - "Repeaters"
+      summary: Notify repeater reset done
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+
+  /infrastructureManagement/v2/mobiles/isForceUpgradeRequired:
+    post:
+      tags:
+        - "Miscellaneous"
+      summary: Check if mobile app require force upgrade
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                appVersion:
+                  type: integer
+                  example: 12356
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      forceUpgrade:
+                        type: boolean
+                        example: true
+
+  /infrastructureManagement/v2/partners/:partnerId/organisationsExist:
+    get:
+      tags:
+        - "Miscellaneous"
+      summary: To check if organisations exist under a partner
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: "success"
+                  message:
+                    type: object
+                    properties:
+                      organisationsExist:
+                        type: boolean
+                        example: true
+
+  /infrastructureManagement/v2/integrationTypes:
+    get:
+      tags:
+        - "Integration Types"
+      summary: Get all integration types
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      integrations:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "greytHR"
+
+    post:
+      tags:
+        - "Integration Types"
+      summary: Create an integration type
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                name:
+                  type: "string"
+                  example: "greytHR"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "success"
+
+  /infrastructureManagement/v2/integrationTypes/:typeId:
+    delete:
+      tags:
+        - "Integration Types"
+      summary: Delete an integration types
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Integration type deleted successfully!!!"
+  /infrastructureManagement/v2/integrators/:integratorId/organisations:
+    get:
+      tags:
+        - "Integrators"
+      summary: Get list of organisations under integrator
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      organisations:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "MRINQ"
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+  /infrastructureManagement/v2/integrators/:integratorId/saamsIntegration:
+    post:
+      tags:
+        - "Integrators"
+      summary: enable Saams Integration
+      requestBody:
+        required: true
+        description: enable saams integration 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enable:
+                  type: boolean
+                  example: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Saams integration updated successfully."
+      
+      
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:orgId/enrollCard:
+    post:
+      tags:
+        - "Card Enrollment/Assignment"
+      summary: "Enroll cards under an organisation."
+      requestBody:
+        required: true
+        description: Bulk request to enroll cards under an organisation.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mode:
+                  type: boolean
+                  example: "bulk_card_enrollment"
+                enrolledCards:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      exceptionalEnrollment:
+                        type: boolean
+                        example: false
+                      spintlyCard:
+                        type: boolean
+                        example: true
+                      atqa:
+                        type: number
+                        example: 12
+                      sak:
+                        type: number
+                        example: 75
+                      uuid:
+                        type: string
+                        example: "04020323"
+                      credentialId:
+                        type: number
+                        example: 12345
+                      eventTime:
+                        type: number
+                        example: 50000011
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Card got enrolled under organisation successfully."
+
+  /infrastructureManagement/v2/isCardEnrolled:
+    post:
+      tags:
+        - "Card Enrollment/Assignment"
+      summary: "Check if card is in enrolled or unenrolled state."
+      requestBody:
+        required: true
+        description: Card details to check enrollment of.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                atqa:
+                  type: number
+                  example: 12
+                sak:
+                  type: number
+                  example: 75
+                uuid:
+                  type: string
+                  example: "04020323"
+                credentialId:
+                  type: number
+                  example: 12345
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      cardEnrolled:
+                        type: boolean
+                        example: false
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:orgId/isCardAssigned:
+    post:
+      tags:
+        - "Card Enrollment/Assignment"
+      summary: "Check if card is assigned to an organisation."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                atqa:
+                  type: number
+                  example: 4
+                sak:
+                  type: number
+                  example: 8
+                uuid:
+                  type: string
+                  example: "04020323"
+                credentialId:
+                  type: number
+                  example: 12345
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      cardAssigned:
+                        type: boolean
+                        example: false
+                      spintlyCard:
+                        type: boolean
+                        example: true
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:orgId/unenrollCard:
+    post:
+      tags:
+        - "Card Enrollment/Assignment"
+      summary: "Unenroll cards from an organisation."
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                unenrolledCards:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      spintlyCard:
+                        type: boolean
+                        example: true
+                      atqa:
+                        type: number
+                        example: 4
+                      sak:
+                        type: number
+                        example: 8
+                      uuid:
+                        type: string
+                        example: "04020323"
+                      credentialId:
+                        type: number
+                        example: 12345
+                      eventTime:
+                        type: number
+                        example: 50000011
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "Card got unenrolled from organisation successfully."
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/meshIOs:
+    get:
+      tags:
+        - "Mesh IO"
+      summary: Get list of meshIOs. TODO; support pagination.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      meshIOs:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/MeshIO"
+
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - "Mesh IO"
+      summary: Add a meshIO.
+      requestBody:
+        required: true
+        description: Details for adding a Mesh IO under a site.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Mesh I/O 1"
+                serialNumber:
+                  type: string
+                  example: "1001F001000001"
+                siteId:
+                  type: number
+                  example: 1
+      responses:
+        200:
+          description: Added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/meshIOs/:serialNumber:
+    delete:
+      tags:
+        - "Mesh IO"
+      summary: Delete a meshIO.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: "meshIO deleted from organisation."
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/meshIOs/:serialNumber/meshIOPins:
+    get:
+      tags:
+        - "Mesh IO"
+      summary: Get list of MeshIO pins under a meshIO.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MeshIOPin"
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/firepanels/isEnabled:
+    get:
+      tags:
+        - "Fire Panel"
+      summary: Find if firepanel is enabled or not.
+      responses:
+        200:
+          description: Return object with boolean.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      isEnabled:
+                        type: boolean
+                        example: true
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/firepanels/setEnabled:
+    post:
+      tags:
+        - "Fire Panel"
+      summary: Enable or disable firepanel integration for the organisation.
+      requestBody:
+        required: true
+        description: Details for enabling or disabling firepanel integration.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enable:
+                  type: boolean
+                  example: true
+      responses:
+        200:
+          description: Enabled successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/firepanels:
+    get:
+      tags:
+        - "Fire Panel"
+      summary: Get list of firepanels. TODO; support pagination.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  firepanels:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FirePanel"
+    post:
+      tags:
+        - "Fire Panel"
+      summary: Create a new firepanel under an organisation.
+      requestBody:
+        required: true
+        description: Details for creating a new firepanel.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Fire Panel 1"
+                siteId:
+                  type: number
+                  example: 1
+                meshIOs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      serialNumber:
+                        type: string
+                        example: "1001F001000001"
+                      pins:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/MeshIOPin"
+      responses:
+        200:
+          description: Created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      firePanelId:
+                        type: number
+                        example: 1
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - "Fire Panel"
+      summary: Edit a firepanel under an organisation.
+      requestBody:
+        required: true
+        description: Details for updating a firepanel. Note that meshIO pins can belong to more than one meshIO.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: number
+                  example: 1
+                name:
+                  type: string
+                  example: "Fire Panel 1"
+                meshIOs:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      serialNumber:
+                        type: string
+                        example: "1001F001000001"
+                      pins:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/MeshIOPin"
+      responses:
+        200:
+          description: Updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/meshIOs/detach:
+    post:
+      tags:
+        - "Mesh IO"
+      summary: This API gets called to notify meshIO is unassigned.
+      requestBody:
+        required: true
+        description: Details for updating meshIO extServicesState.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                serialNumber:
+                  type: string
+                  example: "1243564749"
+      responses:
+        200:
+          description: Enabled successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: MeshIO unassigned successfully
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/firepanels/:firePanelId/meshIOs:
+    get:
+      tags:
+        - "Fire Panel"
+      summary: Get list of mesh IOs under a firepanel.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MeshIO"
+
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+    # post:
+    #   tags:
+    #   - "Fire Panel"
+    #   summary: Add a meshIO under a firepanel.
+    #   requestBody:
+    #     required: true
+    #     description: Details to add a meshIO under a firepanel.
+    #     content:
+    #       application/json:
+    #         schema:
+    #           type: object
+    #           properties:
+    #             serialNumber:
+    #               type: string
+    #               example: 1001F001000001
+    #   responses:
+    #     200:
+    #       description: Success
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               type:
+    #                 type: string
+    #                 example: success
+    #               message:
+    #                 type: string
+    #                 example: MeshIO has been successfully added under the firepanel.
+    #     400:
+    #       description: Bad Request
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/Error'
+    #     # 500:
+    #     #   description: Internal Server Error
+    #     #   content:
+    #     #     application/json:
+    #     #       schema:
+    #     #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/firepanels/:firePanelId/meshIOs/:serialNumber:
+    post:
+      tags:
+        - "Fire Panel"
+      summary: detach a meshIO under a firepanel.
+      requestBody:
+        required: true
+        description: Details for updating a firepanel. Note that meshIO pins can belong to more than one meshIO.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceStatus:
+                  type: string
+                  example: "detached"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: MeshIO has been successfully removed from under the firepanel.
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/meshIOs/:serialNumber/configureDone:
+    post:
+      tags:
+        - "Mesh IO"
+      summary: This API gets called to notify meshIO configure done.
+      requestBody:
+        required: false
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceConfiguredInfo:
+                  type: object
+                  properties:
+                    deviceKey:
+                      type: string
+                      example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                    cid:
+                      type: string
+                      example: "0059"
+                    pid:
+                      type: string
+                      example: "1001"
+                    vid:
+                      type: string
+                      example: "3020"
+                    cprl:
+                      type: string
+                      example: "0028"
+                    defaultTTL:
+                      type: number
+                      example: 8
+                    features:
+                      type: object
+                      properties:
+                        friend:
+                          type: number
+                          example: 2
+                        lowPower:
+                          type: number
+                          example: 2
+                        proxy:
+                          type: number
+                          example: 1
+                        relay:
+                          type: number
+                          example: 1
+                    elements:
+                      type: array
+                      items:
+                        properties:
+                          name:
+                            type: string
+                            example: "Element: 0x0007"
+                          index:
+                            type: number
+                            example: 1
+                          location:
+                            type: string
+                            example: "0000"
+                          elements:
+                            type: array
+                            items:
+                              properties:
+                                name:
+                                  type: string
+                                  example: "Element: 0x0007"
+                                index:
+                                  type: number
+                                  example: 1
+                                location:
+                                  type: string
+                                  example: "0000"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/meshIOs/:serialNumber/resetDone:
+    post:
+      tags:
+        - "Mesh IO"
+      summary: This API gets called to notify meshIO reset done.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v2/partner/:partnerId/organisations/:organisationId/firepanels/enable:
+    get:
+      tags:
+        - "Fire Panel"
+      summary: API to get state of firepanel integration on the organisation (using APIkey).
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                    example: true
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - "Fire Panel"
+      summary: API to set state of firepanel integration on the organisation (using APIkey).
+      requestBody:
+        required: true
+        description: The state to update firepanel integration to.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enable:
+                  type: boolean
+                  example: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                    example: true
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+        
+  /infrastructureManagement/v2/integrators/partners/:partnerId/organisations/:organisationId/firepanels/:firepanelId:
+    patch:
+      tags:
+        - "Fire Panel"
+      summary: API to update of firepanel name  (using APIkey).
+      requestBody:
+        required: true
+        description: The state to update firepanel integration to.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "firepnale_1"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type : string
+                    example: "firepanel has been successfully renamed.
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /infrastructureManagement/v2/partners/:partnerId/organisations/:organisationId/firepanels/:firePanelId:
+    delete:
+      tags:
+        - "Fire Panel"
+      summary: API to delete a firepanel.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: firepanel has been successfully removed from organisation.
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        # 500:
+        #   description: Internal Server Error
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: '#/components/schemas/Error'
+
+  /infrastructureManagement/v3/integrators/partners/:partnerId/organisations:
+    get:
+      tags:
+        - "Resource creation APIs for integrators"
+      summary: Get list of organisations under partner
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      organisations:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "MRINQ"
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+
+    post:
+      tags:
+        - "Resource creation APIs for integrators"
+      summary: Create a organisation under a partner
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                integratorId:
+                  type: number
+                  example: 1
+                name:
+                  type: "string"
+                  example: "Mrinq"
+                type:
+                  type: "string"
+                  example: "office"
+                country:
+                  type: "string"
+                  example: "IN"
+                admin:
+                  type: object
+                  properties:
+                    name:
+                      type: "string"
+                      example: "Joaan"
+                    phoneNumber:
+                      type: "string"
+                      example: "+911020202023"
+                    email:
+                      type: "string"
+                      example: "admin@mrinq.com"
+                modules:
+                  type: object
+                  properties:
+                    modulesToAdd:
+                      type: array
+                      items:
+                        type: string
+                        example:  "attendance_management"
+
+                sites:
+                  type: array
+                  items:
+                    properties:
+                      name:
+                        type: "string"
+                        example: "Office-1"
+                      location:
+                        type: "string"
+                        example: "Margao"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      organisationId:
+                        type: number
+                        example: 1
+                      sites:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 12
+                            name:
+                              type: string
+                              example: "Office-1"
+
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/sites:
+    get:
+      tags:
+        - "Resource creation APIs for integrators"
+      summary: Get Site under organisations
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      sites:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: "string"
+                              example: "Office-2"
+                            location:
+                              type: "string"
+                              example: "Porvorim"
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+
+    post:
+      tags:
+        - "Resource creation APIs for integrators"
+      summary: Create a site under a organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Office-2"
+                location:
+                  type: "string"
+                  example: "Porvorim"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      siteId:
+                        type: number
+                        example: 1
+
+  # /infrastructureManagement/v4/partners/:partnerId/organisations/:organisationId/accessPoints:
+  #   get:
+  #     tags:
+  #       - "new version api"
+  #     summary: Get access points under organisation.
+  #     responses:
+  #       200:
+  #         description: Success
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 type:
+  #                   type: string
+  #                   example: success
+  #                 message:
+  #                   type: object
+  #                   properties:
+  #                     accessPoints:
+  #                       type: array
+  #                       items:
+  #                         properties:
+  #                           id:
+  #                             type: number
+  #                             example: 1
+  #                           siteId:
+  #                             type: number
+  #                             example: 1
+  #                           name:
+  #                             type: "string"
+  #                             example: "Main Entrance"
+  #                           forAccess:
+  #                             type: boolean
+  #                             example: true
+  #                           forAttendance:
+  #                             type: boolean
+  #                             example: true
+  #                           installationType:
+  #                             type: "string"
+  #                             example: "swingDoor/boomBarrier"
+  #                           resourceState:
+  #                             type: "string"
+  #                             example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+  #                           doorSensor:
+  #                             type: object
+  #                             properties:
+  #                                 direction:
+  #                                   type: string
+  #                                   example: "entry"
+  #                                 enabled:
+  #                                   type: string
+  #                                   example: "true"
+  #                                 type:
+  #                                   type: string
+  #                                   example: "NC"
+  #                           devices:
+  #                             type: array
+  #                             items:
+  #                               properties:
+  #                                 serialNumber:
+  #                                   type: string
+  #                                   example: "1001A001000003"
+  #                                 type:
+  #                                   type: string
+  #                                   example: "entry/exit"
+  #                                 meshConfiguredState:
+  #                                   type: number
+  #                                   example: 1
+  #                                 deviceStatus:
+  #                                   type: number
+  #                                   example: 1
+  #                                 resourceState:
+  #                                   type: "string"
+  #                                   example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+
+  #   post:
+  #     tags:
+  #       - "Resource creation APIs for integrators"
+  #     summary: Add access point to site under organisation
+  #     requestBody:
+  #       required: true
+  #       description: access log details
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               siteId:
+  #                 type: number
+  #                 example: 1
+  #               name:
+  #                 type: "string"
+  #                 example: "Main Entrance"
+  #               forAccess:
+  #                 type: boolean
+  #                 example: true
+  #               forAttendance:
+  #                 type: boolean
+  #                 example: true
+  #               installationType:
+  #                 type: "string"
+  #                 example: "swingDoor/boomBarrier"
+  #               doorSensor:
+  #                 type: object
+  #                 properties:
+  #                   direction:
+  #                     type: string
+  #                     example: "entry"
+  #                   enabled:
+  #                     type: string
+  #                     example: "true"
+  #                   type:
+  #                     type: string
+  #                     example: "NC"
+  #               devices:
+  #                 type: array
+  #                 items:
+  #                   properties:
+  #                     serialNumber:
+  #                       type: string
+  #                       example: "1001A001000003"
+  #                     type:
+  #                       type: string
+  #                       example: "entry/exit"
+
+  #     responses:
+  #       200:
+  #         description: Success
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 type:
+  #                   type: string
+  #                   example: success
+  #                 message:
+  #                   type: object
+  #                   properties:
+  #                     accessPointId:
+  #                       type: number
+  #                       example: 1
+
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/gateways:
+    get:
+      tags:
+        - "new version api"
+      summary: Get gateways under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      gateways:
+                        type: array
+                        items:
+                          properties:
+                            siteId:
+                              type: number
+                              example: 1
+                            serialNumber:
+                              type: "string"
+                              example: "100BA00A000005"
+                            meshConfiguredState:
+                              type: number
+                              example: 1
+                            cloudStatus:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+
+    post:
+      tags:
+        - "Resource creation APIs for integrators"
+      summary: Add gateway to site under organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                siteId:
+                  type: number
+                  example: 1
+                serialNumber:
+                  type: "string"
+                  example: "100BA00A000005"
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+  /infrastructureManagement/v2/internal/addSharedDoors:
+    post:
+      tags:
+        - "creation APIs for internal service"
+      summary: Add Share doors with tenant site (x-api-key)
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                landlordOrgId:
+                  type: integer
+                  example: 25
+                linkedTenantSites:
+                  type: array
+                  items:
+                    properties:
+                      tenantSiteId:
+                        type: integer
+                        example: 12
+                      sharedAccessPoints:
+                          type: array
+                          items:
+                            type: integer
+                            example: 1234
+                            
+                        
+                
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: accessPoint successfilly shared
+        
+  
+  /infrastructureManagement/v2/internal/removeSharedDoors:
+    post:
+      tags:
+        - "creation APIs for internal service"
+      summary: remove Share doors with tenant site (x-api-key)
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                landlordOrgId:
+                  type: integer
+                  example: 25
+                linkedTenantSites:
+                  type: array
+                  items:
+                    properties:
+                      tenantSiteId:
+                        type: integer
+                        example: 12
+                      sharedAccessPoints:
+                          type: array
+                          items:
+                            type: integer
+                            example: 1234
+                            
+                        
+                
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: accessPoint successfilly removed
+  /infrastructureManagement/v2/internal/site/:siteId/accessPoints/:accessPointId:
+   patch:
+      tags:
+        -  "creation APIs for internal service"
+      summary: Update a accessPoint name under a organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Main Entrance"
+                forAttendance:
+                  type: boolean
+                  example: true
+               
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: accessPoint name updated successfully
+  /infrastructureManagement/v2/internal/organisations/:organisationId:
+   patch:
+      tags:
+        -  "creation APIs for internal service"
+      summary: Update a organisation name
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "new Org"
+                
+               
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: organisation name updated successfully
+  
+  /infrastructureManagement/v2/partners:
+    post:
+      tags:
+        - "Partner"
+      summary: Create a new partner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                partnerId:
+                  type: number
+                  example: 4
+                integratorId:
+                  type: number
+                  example: 3
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: success
+  /infrastructureManagement/v2/partners/:partnerId/detachedDevices:
+    get:
+      tags:
+        - "Mobile:New api"
+      summary: Get all detached devices under partner
+     
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      devices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            orgId:
+                              type: integer
+                              example: 123
+                            orgName:
+                              type: string
+                              example: "New Org"
+                            serialNumber:
+                              type: string
+                              example: "1001A001000003"
+                            meshConfiguredState:
+                              type: number
+                              example: 1
+                            deviceStatus:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                            meshConfigurationInfo:
+                              type: object
+                              properties:
+                                networkKey:
+                                  type: string
+                                  example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                unicastMeshAddress:
+                                  type: number
+                                  example: 0x0002
+                                appKey:
+                                  type: string
+                                  example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                gatewayGroupAddr:
+                                  type: number
+                                  example: 0xC001
+                                accessControlGroupAddr:
+                                  type: number
+                                  example: 0xC000
+                                healthServerGroupAddr:
+                                  type: number
+                                  example: 0xC002
+                                eKey:
+                                  type: string
+                                  example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                                macId:
+                                  type: string
+                                  example: "FD5F3A592120"
+                              
+                          
+                      
+  /infrastructureManagement/v2/internal/partners/:partnerId/organisations:
+   post:
+      tags:
+        - "creation APIs for internal service"
+      summary: Create a organisation under a partner (x-api-key)
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                integratorId:
+                  type: number
+                  example: 1
+                name:
+                  type: "string"
+                  example: "Mrinq"
+                type:
+                  type: "string"
+                  example: "office"
+                country:
+                  type: "string"
+                  example: "IN"
+                admin:
+                  type: object
+                  properties:
+                    name:
+                      type: "string"
+                      example: "Joaan"
+                    phoneNumber:
+                      type: "string"
+                      example: "+911020202023"
+                    email:
+                      type: "string"
+                      example: "admin@mrinq.com"
+                modules:
+                  type: object
+                  properties:
+                    modulesToAdd:
+                      type: array
+                      items:
+                        type: string
+                        example:  "attendance_management"
+
+                sites:
+                  type: array
+                  items:
+                    properties:
+                      name:
+                        type: "string"
+                        example: "Office-1"
+                      location:
+                        type: "string"
+                        example: "Margao"
+                landlordOrgId:
+                  type: number
+                  example: 1
+                
+                
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      organisationId:
+                        type: number
+                        example: 1
+                      sites:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 12
+                            name:
+                              type: string
+                              example: "Office-1"
+  /infrastructureManagement/v2/internal/partners/:partnerId/organisations/:organisationId/sites:
+   post:
+      tags:
+        - "creation APIs for internal service"
+      summary: Create a organisation under a partner (x-api-key)
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                      name:
+                        type: "string"
+                        example: "Office-1"
+                      location:
+                        type: "string"
+                        example: "Margao"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    properties:
+                      siteId:
+                        type: number
+                        example: 12
+                          
+                          
+  /infrastructureManagement/v2/partners/:partnerId:
+    delete:
+      tags:
+        - "Partner"
+      summary: delete a partner
+      
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: success
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/detachedDevices:
+    get:
+      tags:
+        - "new version api"
+      summary: Get list of detached device in organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      devices:
+                        type: array
+                        items:
+                          properties:
+                            serialNumber:
+                              type: string
+                              example: "1001A001000003"
+                            meshConfiguredState:
+                              type: number
+                              example: 1
+                            deviceStatus:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                           
+ 
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/meshIOs:
+    get:
+      tags:
+        - "new version api"
+      summary: Get list of meshIOs. TODO; support pagination.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      meshIOs:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/MeshIOs"
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/devices/:serialNumber/meshConfigInfo:
+    get:
+        tags:
+          - "new version api"
+        summary: device MeshConfigInfo.
+        responses:
+          200:
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: success
+                    message:
+                      
+                      type: object
+                      properties:
+                        networkKey:
+                          type: string
+                          example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                        unicastMeshAddress:
+                          type: number
+                          example: 0x0002
+                        appKey:
+                          type: string
+                          example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                        gatewayGroupAddr:
+                          type: number
+                          example: 0xC001
+                        accessControlGroupAddr:
+                          type: number
+                          example: 0xC000
+                        healthServerGroupAddr:
+                          type: number
+                          example: 0xC002
+                        eKey:
+                          type: string
+                          example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                        macId:
+                          type: string
+                          example: "FD5F3A592120"
+                        cardType:
+                          type: string
+                          example: secure/unsecure
+                        cardReadBaseKey:
+                          type: string
+                          example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                        deviceKey:
+                          type: string
+                          example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/gateways/:serialNumber/meshConfigInfo:
+    get:
+      tags:
+        - "new version api"
+      summary: Get gateways meshConfigInfo under organisation
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      networkKey:
+                        type: string
+                        example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                      unicastMeshAddress:
+                        type: number
+                        example: 0x0002
+                      appKey:
+                        type: string
+                        example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                      gatewayGroupAddr:
+                        type: number
+                        example: 0xC001
+                      accessControlGroupAddr:
+                          type: number
+                          example: 0xC000
+                      healthServerGroupAddr:
+                        type: number
+                        example: 0xC002
+                      macId:
+                        type: string
+                        example: "FD5F3A592120"
+                      deviceKey:
+                        type: string
+                        example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+  /infrastructureManagement/v2/organisations/:organisationId/changePartner:
+    patch:
+      tags:
+        - "Partner"
+      summary: change a partner
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                      oldPartnerId:
+                        type: integer
+                        example: 1
+                      newPartnerId:
+                        type: integer
+                        example: 1
+                      
+      
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: partner successfully updated
+  /infrastructureManagement/v3/partners/:partnerId/organisations/:organisationId/meshIOs/:serialNumber/meshConfigInfo:
+    get:
+      tags:
+        - "new version api"
+      summary: Get meshIO config info.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    properties:
+                      networkKey:
+                        type: string
+                        example: "81210a8ac8ba8cafb813ad8c61887884"
+                      unicastMeshAddress:
+                        type: number
+                        example: 1
+                      appKey:
+                        type: string
+                        example: "81210a8ac8ba8cafb813ad8c61887884"
+                      gatewayGroupAddr:
+                        type: number
+                        example: 49153
+                      accessControlGroupAddr:
+                        type: number
+                        example: 49152
+                      healthServerGroupAddr:
+                        type: number
+                        example: 49154
+                      macId:
+                        type: string
+                        example: eeeeee49a451
+                      deviceKey:
+                        type: string
+                        example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+  /infrastructureManagement/v2/organisations/formData:
+    get:
+      tags:
+        - "developer_support_change api"
+      summary: Get form data using x-api-key.
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      modules:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "access_management"
+                            default:
+                              type: string
+                              example: "enable/disable"
+                            editable:
+                              type: boolean
+                              example: true     
+  /infrastructureManagement/v2/integrators/:integratorId/organisations/:organisationId:
+    get:
+      tags:
+        - "developer_support_change api"
+      summary: Get organisation details (x-api-key)
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      generalSetting:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "MRINQ"
+                          type:
+                            type: string
+                            example: "office"
+                          country:
+                            type: "string"
+                            example: "IN"
+                          admin:
+                            type: object
+                            properties:
+                              editable:
+                                type: boolean
+                                example: false
+                              name:
+                                type: "string"
+                                example: "Joaan"
+                              phoneNumber:
+                                type: "string"
+                                example: "+911020202023"
+                              email:
+                                type: "string"
+                                example: "admin@mrinq.com"
+                          integration:
+                            type: object
+                            properties:
+                              enabled:
+                                type: boolean
+                                example: true
+                          modules:
+                            type: array
+                            items:
+                              properties:
+                                id:
+                                  type: number
+                                  example: 1
+                                name:
+                                  type: string
+                                  example: "access_management"
+                          resourceState:
+                            type: "string"
+                            example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+  /infrastructureManagement/v2/integrators/:integratorId/organisations/:organisationId/integrationSettings:
+    patch:
+      tags:
+        - "developer_support_change api"
+      summary: Edit organisation settings (x-api-key)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                  example: true
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+  /infrastructureManagement/v2/integrators/:integratorId/organisations/:organisationId/moduleSettings:
+    patch:
+      tags:
+        - "developer_support_change api"
+      summary: Edit organisation settings (x-api-key)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                modulesToAdd:
+                  type: array
+                  items:
+                    type: integer
+                    example: 1
+                modulesToRemove:
+                  type: array
+                  items:
+                    type: integer
+                    example: 2
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+  /infrastructureManagement/v3/integrators/:integratorId/organisations:
+    get:
+      tags:
+        - "developer_support_change api"
+      summary: Get list of organisations under integrator (x-api-key)
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      organisations:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            name:
+                              type: string
+                              example: "MRINQ"
+                            partnerId:
+                              type: number
+                              example: 1
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+  /infrastructureManagement/v4/partners/:partnerId/organisations/:organisationId/accessPoints:
+    post:
+      tags:
+        - "Access Point"
+      summary: v4 Add access point to site under organisation
+      requestBody:
+        required: true
+        description: access log details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: "string"
+                  example: "Main Entrance"
+                installationMethod:
+                  type: "string"
+                  example: New install/ Retrofit Type 1
+                configuration:
+                  type: "string"
+                  example: Entry and Exist/Entry reader and REX/Entry reader and 1-door controller/ 1-door controller and REX/Clock-in device/Door Lock
+                siteId:
+                  type: number
+                  example: 1
+                devices:
+                  type: array
+                  items:
+                    properties:
+                      serialNumber:
+                        type: string
+                        example: "1001A001000003"
+
+                      direction:
+                        type : string
+                        example: entry/exit
+                lockingMechanism:
+                  type: "string"
+                  example: "EM or Mag Lock/strike Lock/boom Barrier or Sliding Gate/Flap or Tunstile Barrier"
+                relaySettings:
+                  type: object
+                  properties:
+                    relayOnTime:
+                      type: number
+                      example: 6
+                    invertRelayLogic:
+                      type: boolean
+                      example: true
+                enableAttendance:
+                  type: boolean
+                  example: true
+                
+                
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      accessPointId:
+                        type: number
+                        example: 1
+    get:
+      tags:
+        - "Access Point"
+      summary: Get access points under organisation.
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      accessPoints:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            siteId:
+                              type: number
+                              example: 1
+                            siteName:
+                              type: string
+                              example: lakeplaza
+                            name:
+                              type: "string"
+                              example: "Main Entrance"
+                            enableAttendance:
+                              type: boolean
+                              example: true
+                            installationType:
+                              type: "string"
+                              example: "swingDoor/boomBarrier"
+                            installationMethod:
+                              type: "string"
+                              example: New install/ Retrofit Type 1
+                            configuration:
+                              type: "string"
+                              example: entry and exist/entry reader and REX/clockin
+                            relaySettings:
+                              type: object
+                              properties:
+                                relayOnTime:
+                                  type: number
+                                  example: 6
+                                invertRelayLogic:
+                                  type: boolean
+                                  example: true
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+                            devices:
+                              type: array
+                              items:
+                                properties:
+                                  serialNumber:
+                                    type: string
+                                    example: "1001A001000003"
+                                  type:
+                                    type: string
+                                    example: "entry/exit/controller"
+                                  meshConfiguredState:
+                                    type: number
+                                    example: 1
+                                  deviceStatus:
+                                    type: number
+                                    example: 1
+                                  resourceState:
+                                    type: "string"
+                                    example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                                  
+  /infrastructureManagement/v4/partners/:partnerId/organisations/:organisationId/accessPoints/configuration:
+     get:
+      tags:
+        - "Access Point"
+      summary: Get access points under organisation. (Also includes cardReadBaseKey)
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: success
+                  message:
+                    type: object
+                    properties:
+                      accessPoints:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: number
+                              example: 1
+                            siteId:
+                              type: number
+                              example: 1
+                            siteName:
+                              type: string
+                              example: lakeplaza
+                            name:
+                              type: "string"
+                              example: "Main Entrance"
+                            enableAttendance:
+                              type: boolean
+                              example: true
+                            installationType:
+                              type: "string"
+                              example: "swingDoor/boomBarrier"
+                            installationMethod:
+                              type: "string"
+                              example: New install/ Retrofit Type 1
+                            configuration:
+                              type: "string"
+                              example: entry and exist/entry reader and REX/clockin
+                            relaySettings:
+                              type: object
+                              properties:
+                                relayOnTime:
+                                  type: number
+                                  example: 6
+                                invertRelayLogic:
+                                  type: boolean
+                                  example: true
+                            resourceState:
+                              type: "string"
+                              example: "in_sync/create_pending/create_failed/update_pending/update_failed/delete_pending/delete_failed"
+                            devices:
+                              type: array
+                              items:
+                                properties:
+                                  serialNumber:
+                                    type: string
+                                    example: "1001A001000003"
+                                  type:
+                                    type: number
+                                    example: 1
+                                  meshConfiguredState:
+                                    type: number
+                                    example: 1
+                                  deviceStatus:
+                                    type: number
+                                    example: 1
+                                  resourceState:
+                                    type: "string"
+                                    example: "in_sync/create_pending/create_failed/configure_pending/configure_failed/reset_pending/reset_failed/detach_pending/detach_failed/delete_pending/delete_failed"
+                                  meshConfigurationInfo:
+                                    type: object
+                                    properties:
+                                      networkKey:
+                                        type: string
+                                        example: "5b1c3141b25c1a113b4aab122a5aa35b"
+                                      unicastMeshAddress:
+                                        type: number
+                                        example: 0x0002
+                                      appKey:
+                                        type: string
+                                        example: "152c42ccca5b11ccab1b1a42cba25ac3"
+                                      gatewayGroupAddr:
+                                        type: number
+                                        example: 0xC001
+                                      accessControlGroupAddr:
+                                        type: number
+                                        example: 0xC000
+                                      healthServerGroupAddr:
+                                        type: number
+                                        example: 0xC002
+                                  deviceConfigurationInfo:
+                                    type: object
+                                    properties:
+                                      eKey:
+                                        type: string
+                                        example: "71bfcbb5b7bf94675d673bc5e4eba4e3"
+                                      macId:
+                                        type: string
+                                        example: "FD5F3A592120"
+                                      cardType:
+                                        type: string
+                                        example: "secure/unsecure"
+                                      cardReadBaseKey:
+                                        type: string
+                                        example: "81bfcbb5b7bf94675d673bc5e4eba4e3"
+                                      relayOnTime:
+                                        type: number
+                                        example: 6
+                                      invertRelayLogic:
+                                        type: boolean
+                                        example: false
+                                      installationMethod:
+                                        type: number
+                                        example: 1
+                                      configuration:
+                                        type: number
+                                        example: 1
+ 
